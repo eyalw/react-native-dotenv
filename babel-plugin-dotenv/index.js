@@ -6,6 +6,12 @@ var process = require('process');
 module.exports = function (data) {
     var t = data.types;
 
+    var environments = {
+      development: '.development',
+      production: '.production',
+      staging: '.staging'
+    }
+
     return {
         visitor: {
             ImportDeclaration: function(path, state) {
@@ -19,11 +25,8 @@ module.exports = function (data) {
 
                 if (path.node.source.value === options.replacedModuleName) {
                   var config = dotEnv.config({ path: sysPath.join(configDir, configFile), silent: true }) || {};
-                  var platformPath = (process.env.BABEL_ENV === 'development' || process.env.BABEL_ENV === undefined)
-                                          ? configFile + '.development'
-                                          : configFile + '.production';
+                  var platformPath = configFile + (environments[process.env.BABEL_ENV] || environments['development']);
                   var config = Object.assign(config, dotEnv.config({ path: sysPath.join(configDir, platformPath), silent: true }));
-
                   path.node.specifiers.forEach(function(specifier, idx){
                     if (specifier.type === "ImportDefaultSpecifier") {
                       throw path.get('specifiers')[idx].buildCodeFrameError('Import dotenv as default is not supported.')

@@ -47,6 +47,20 @@ describe('myself in some tests', function() {
     var result = babel.transformFileSync('test/fixtures/prod-env/source.js')
     expect(result.code).to.be('\'use strict\';\n\nconsole.log(\'abc123\');\nconsole.log(\'foobar\');')
     process.env['BABEL_ENV'] = undefined;
+  }) 
+
+  it('should load let .env.staging overwrite .env', function(){
+    process.env['BABEL_ENV'] = 'staging';
+    var result = babel.transformFileSync('test/fixtures/stage-env/source.js');
+    expect(result.code).to.be('\'use strict\';\n\nconsole.log(\'abc123\');\nconsole.log(\'iamstaging\');');
+    process.env['BABEL_ENV'] = undefined;
+  })
+
+  it('should load .env.development if .env.environment does not exist', function(){
+    process.env['BABEL_ENV'] = 'stage';
+    var result = babel.transformFileSync('test/fixtures/stage-env/source.js');
+    expect(result.code).to.be('\'use strict\';\n\nconsole.log(\'abc123\');\nconsole.log(\'userdonthavename\');');
+    process.env['BABEL_ENV'] = undefined;    
   })
 
   it('should support `as alias` import syntax', function(){
