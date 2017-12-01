@@ -25,7 +25,7 @@ module.exports = function (data) {
 
                 if (path.node.source.value === options.replacedModuleName) {
                   var config = dotEnv.config({ path: sysPath.join(configDir, configFile), silent: true }) || {};
-                  var platformPath = configFile + (environments[process.env.CONFIG_ENV || process.env.BABEL_ENV] || environments['development']);
+                  var platformPath = configFile + (environments[process.env.RELEASE_STAGE || process.env.BABEL_ENV] || environments['development']);
                   var config = Object.assign(config, dotEnv.config({ path: sysPath.join(configDir, platformPath), silent: true }));
                   path.node.specifiers.forEach(function(specifier, idx){
                     if (specifier.type === "ImportDefaultSpecifier") {
